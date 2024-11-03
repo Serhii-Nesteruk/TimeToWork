@@ -15,7 +15,8 @@ void AStaticCameraController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ACameraActor* cameraActor = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainCameraActor::StaticClass()));
+	ACameraActor* cameraActor =
+		Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AMainCameraActor::StaticClass()));
 	if (cameraActor)
 	{
 		SetViewTarget(cameraActor);
