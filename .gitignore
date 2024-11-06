@@ -1,3 +1,15 @@
 .vs
 .idea
 Intermediate
+
+# Binaries
+Binaries/
+
+# Intermediate and Saved files
+Intermediate/
+Saved/
+
+# User-specific settings
+*.ini
+*.sln
+*.log
