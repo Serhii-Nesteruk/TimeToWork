@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "../Sprites/BaseSprite.h"
+#include "../Sprites/Houses/HouseSprite.h"
 #include "GameController.generated.h"
 
 UCLASS()
@@ -20,5 +20,6 @@ public:
 	void SettingUpHouses();
 
 private:
+	void OpenModalWindow(const TSubclassOf<UUserWidget>& ModalClass);
 	void SetupCamera();
 };
