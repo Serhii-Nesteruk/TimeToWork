@@ -9,4 +9,5 @@ AMainMenuGameModeBase::AMainMenuGameModeBase()
 {
 	PlayerControllerClass = AMainMenuController::StaticClass();
 	HUDClass = AMainMenuController::StaticClass();
+	
 }
