@@ -1,6 +1,7 @@
 #include "GameController.h"
 
 #include "../Actors/MainCameraActor.h"
+#include "Blueprint/UserWidget.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -28,13 +29,38 @@ void AGameController::SettingUpHouses()
 
 	for (AActor* Actor : FoundSprites)
 	{
-		ABaseSprite* Sprite = Cast<ABaseSprite>(Actor);
-		if (Sprite)
+		AHouseSprite* Sprite = Cast<AHouseSprite>(Actor);
+		if (Sprite->GetModalWindowClass() != nullptr)
 		{
-			Sprite->SetOnClickAction(FOnSpriteClicked::CreateLambda([]() {
-				UE_LOG(LogTemp, Warning, TEXT("Custom action for Blueprint Sprite!"));
+			Sprite->SetOnClickAction(FOnSpriteClicked::CreateWeakLambda(this, [this, Sprite]() {
+				OpenModalWindow(Sprite->GetModalWindowClass());
 			}));
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Sprite %s has no modal window class assigned."), *Sprite->GetName());
+		}
+	}
+}
+
+void AGameController::OpenModalWindow(const TSubclassOf<UUserWidget>& ModalClass)
+{
+	if (ModalClass)
+	{
+		UUserWidget* ModalWidget = CreateWidget<UUserWidget>(this, ModalClass);
+		if (ModalWidget)
+		{
+			ModalWidget->AddToViewport();
+			UE_LOG(LogTemp, Warning, TEXT("Modal window opened: %s"), *ModalClass->GetName());
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to create modal widget: %s"), *ModalClass->GetName());
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No modal class specified for this sprite."));
 	}
 }
 
