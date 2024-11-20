@@ -1,22 +1,90 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+
 
 
 #include "MenuHUD.h"
 #include "Blueprint/UserWidget.h"
-
-#include <iostream>
-#include <ostream>
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
 
 void AMenuHUD::BeginPlay()
 {
 	Super::BeginPlay();
-	if(MenuWidgetClass)
+
+	// Створення та додавання віджета головного меню
+	if (MenuWidgetClass)
 	{
-		const auto MenuWidget = CreateWidget<UUserWidget>(GetWorld(), MenuWidgetClass);
-		if(MenuWidget)
+		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), MenuWidgetClass);
+		if (CurrentWidget)
 		{
-			MenuWidget->AddToViewport();
-			
+			CurrentWidget->AddToViewport();
+		}
+	}
+
+	// Ініціалізація камер через прив'язки
+	if (!MainMenuCamera)
+	{
+		MainMenuCamera = UGameplayStatics::GetActorOfClass(GetWorld(), AActor::StaticClass());
+	}
+	if (!CreditCamera)
+	{
+		CreditCamera = UGameplayStatics::GetActorOfClass(GetWorld(), AActor::StaticClass());
+	}
+	if (!SettingsCamera)
+	{
+		SettingsCamera = UGameplayStatics::GetActorOfClass(GetWorld(), AActor::StaticClass());
+	}
+}
+
+void AMenuHUD::SwitchToCamera(AActor* NewCamera)
+{
+	if (APlayerController* PlayerController = GetOwningPlayerController())
+	{
+		if (NewCamera)
+		{
+			PlayerController->SetViewTarget(NewCamera);
+		}
+	}
+}
+void AMenuHUD::ShowSettingsWidget()
+{
+	// Переконатися, що попередній віджет видалений
+	if (CurrentCreditWidget && CurrentCreditWidget->IsInViewport())
+	{
+		CurrentCreditWidget->RemoveFromParent();
+	}
+
+	if (SettingsWidgetClass)
+	{
+		if (!CurrentSettingsWidget)
+		{
+			CurrentSettingsWidget = CreateWidget<UUserWidget>(GetWorld(), SettingsWidgetClass);
+		}
+
+		if (CurrentSettingsWidget && !CurrentSettingsWidget->IsInViewport())
+		{
+			CurrentSettingsWidget->AddToViewport();
+		}
+	}
+}
+
+void AMenuHUD::ShowCreditWidget()
+{
+	// Переконатися, що попередній віджет видалений
+	if (CurrentSettingsWidget && CurrentSettingsWidget->IsInViewport())
+	{
+		CurrentSettingsWidget->RemoveFromParent();
+	}
+
+	if (CreditWidgetClass)
+	{
+		if (!CurrentCreditWidget)
+		{
+			CurrentCreditWidget = CreateWidget<UUserWidget>(GetWorld(), CreditWidgetClass);
+		}
+
+		if (CurrentCreditWidget && !CurrentCreditWidget->IsInViewport())
+		{
+			CurrentCreditWidget->AddToViewport();
 		}
 	}
 }

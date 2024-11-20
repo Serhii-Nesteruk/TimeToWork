@@ -1,9 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MenuUserWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/PlayerController.h"
+#include "MenuHUD.h"
 
 
 void UMenuUserWidget::NativeConstruct()
@@ -39,15 +40,25 @@ void UMenuUserWidget::OnPlayButtonClicked()
 
 void UMenuUserWidget::OnSettingsButtonClicked()
 {
-	// Логіка для меню налаштувань (поки без дій)
+	// Реалізуйте відкриття налаштувань (можна переключити камеру або відкрити новий віджет)
+	if (AMenuHUD* MenuHUD = Cast<AMenuHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
+	{
+		// Наприклад, переключення на камеру налаштувань (якщо вона існує)
+		MenuHUD->SwitchToCamera(MenuHUD->SettingsCamera); // Замініть SettingsCamera
+	}
 }
+
 void UMenuUserWidget::OnCreditButtonClicked()
 {
-	//логіка для списку творців ігрию.
+	// Переключення на камеру кредитів
+	if (AMenuHUD* MenuHUD = Cast<AMenuHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
+	{
+		MenuHUD->SwitchToCamera(MenuHUD->CreditCamera);
+	}
 }
 
 void UMenuUserWidget::OnQuitButtonClicked()
 {
-	// Завершення гри
-	UKismetSystemLibrary::QuitGame(this, nullptr, EQuitPreference::Quit, true);
+	// Вихід із гри
+	UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
 }
