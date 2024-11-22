@@ -4,22 +4,13 @@
 #include "CreditWidget.h"
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
+#include "Base/BaseMenuWidget.h"
 #include "MenuHUD.h"
 
 void UCreditWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (BackButton)
-	{
-		BackButton->OnClicked.AddDynamic(this, &UCreditWidget::OnBackButtonClicked);
-	}
-}
-
-void UCreditWidget::OnBackButtonClicked()
-{
-	if (AMenuHUD* MenuHUD = Cast<AMenuHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
-	{
-		MenuHUD->SwitchToCamera(MenuHUD->MainMenuCamera);
-	}
+	// Якщо у вас є додаткові кнопки або елементи, прив'яжіть їх тут
+	// Прив'язка кнопки "Назад" вже здійснюється в UBaseMenuWidget
 }

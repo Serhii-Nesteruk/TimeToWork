@@ -2,89 +2,68 @@
 
 
 #include "MenuHUD.h"
+#include "EngineUtils.h"
+#include "Base/BaseMenuWidget.h"
+#include "Settings/SettingsWidget.h"
+#include "Credit/CreditWidget.h"
 #include "Blueprint/UserWidget.h"
-#include "Kismet/GameplayStatics.h"
+#include "MenuCameraActor.h" 
 #include "GameFramework/PlayerController.h"
+#include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 
 void AMenuHUD::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
+    
 
-	// Створення та додавання віджета головного меню
-	if (MenuWidgetClass)
-	{
-		CurrentWidget = CreateWidget<UUserWidget>(GetWorld(), MenuWidgetClass);
-		if (CurrentWidget)
-		{
-			CurrentWidget->AddToViewport();
-		}
-	}
-
-	// Ініціалізація камер через прив'язки
-	if (!MainMenuCamera)
-	{
-		MainMenuCamera = UGameplayStatics::GetActorOfClass(GetWorld(), AActor::StaticClass());
-	}
-	if (!CreditCamera)
-	{
-		CreditCamera = UGameplayStatics::GetActorOfClass(GetWorld(), AActor::StaticClass());
-	}
-	if (!SettingsCamera)
-	{
-		SettingsCamera = UGameplayStatics::GetActorOfClass(GetWorld(), AActor::StaticClass());
-	}
+    // Показуємо основне меню під час запуску
+    ShowMenuWidget();
 }
 
-void AMenuHUD::SwitchToCamera(AActor* NewCamera)
+
+
+void AMenuHUD::SwitchWidget(TSubclassOf<UBaseMenuWidget> WidgetClass)
 {
-	if (APlayerController* PlayerController = GetOwningPlayerController())
-	{
-		if (NewCamera)
-		{
-			PlayerController->SetViewTarget(NewCamera);
-		}
-	}
+    // Закриваємо поточний віджет, якщо він є
+    if (CurrentWidget)
+    {
+        CurrentWidget->RemoveFromParent();
+        CurrentWidget = nullptr;
+    }
+
+    // Створюємо новий віджет
+    if (WidgetClass)
+    {
+        CurrentWidget = CreateWidget<UBaseMenuWidget>(GetWorld(), WidgetClass);
+        if (CurrentWidget)
+        {
+            CurrentWidget->AddToViewport();
+
+            // Налаштовуємо фокус вводу
+            APlayerController* PlayerController = GetOwningPlayerController();
+            if (PlayerController)
+            {
+                FInputModeUIOnly InputMode;
+                InputMode.SetWidgetToFocus(CurrentWidget->TakeWidget());
+                PlayerController->SetInputMode(InputMode);
+                PlayerController->bShowMouseCursor = true;
+            }
+        }
+    }
 }
+
+void AMenuHUD::ShowMenuWidget()
+{
+    SwitchWidget(MenuWidgetClass);
+}
+
 void AMenuHUD::ShowSettingsWidget()
 {
-	// Переконатися, що попередній віджет видалений
-	if (CurrentCreditWidget && CurrentCreditWidget->IsInViewport())
-	{
-		CurrentCreditWidget->RemoveFromParent();
-	}
-
-	if (SettingsWidgetClass)
-	{
-		if (!CurrentSettingsWidget)
-		{
-			CurrentSettingsWidget = CreateWidget<UUserWidget>(GetWorld(), SettingsWidgetClass);
-		}
-
-		if (CurrentSettingsWidget && !CurrentSettingsWidget->IsInViewport())
-		{
-			CurrentSettingsWidget->AddToViewport();
-		}
-	}
+    SwitchWidget(SettingsWidgetClass);
 }
 
-void AMenuHUD::ShowCreditWidget()
+void AMenuHUD::ShowCreditsWidget()
 {
-	// Переконатися, що попередній віджет видалений
-	if (CurrentSettingsWidget && CurrentSettingsWidget->IsInViewport())
-	{
-		CurrentSettingsWidget->RemoveFromParent();
-	}
-
-	if (CreditWidgetClass)
-	{
-		if (!CurrentCreditWidget)
-		{
-			CurrentCreditWidget = CreateWidget<UUserWidget>(GetWorld(), CreditWidgetClass);
-		}
-
-		if (CurrentCreditWidget && !CurrentCreditWidget->IsInViewport())
-		{
-			CurrentCreditWidget->AddToViewport();
-		}
-	}
+    SwitchWidget(CreditsWidgetClass);
 }

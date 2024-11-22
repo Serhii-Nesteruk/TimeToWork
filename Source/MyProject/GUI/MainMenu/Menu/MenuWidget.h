@@ -1,19 +1,20 @@
-
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
-#include "MenuUserWidget.generated.h"
+#include "Base//BaseMenuWidget.h"
+#include "MenuWidget.generated.h"
 
-
-class UButton;
+/**
+ * 
+ */
 UCLASS()
-class MYPROJECT_API UMenuUserWidget : public UUserWidget
+class MYPROJECT_API UMenuWidget : public UBaseMenuWidget
 {
 	GENERATED_BODY()
-
-public:
+	
+protected:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
@@ -23,12 +24,12 @@ public:
 	void OnSettingsButtonClicked();
 
 	UFUNCTION()
-	void OnCreditButtonClicked();
+	void OnCreditsButtonClicked();
 
 	UFUNCTION()
 	void OnQuitButtonClicked();
 
-protected:
+	// Прив'язки кнопок
 	UPROPERTY(meta = (BindWidget))
 	class UButton* PlayButton;
 
@@ -36,7 +37,7 @@ protected:
 	class UButton* SettingsButton;
 
 	UPROPERTY(meta = (BindWidget))
-	class UButton* CreditButton;
+	class UButton* CreditsButton;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* QuitButton;

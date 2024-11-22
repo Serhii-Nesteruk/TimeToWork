@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Base/BaseMenuWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "CreditWidget.generated.h"
 
@@ -10,17 +11,15 @@
  * 
  */
 UCLASS()
-class MYPROJECT_API UCreditWidget : public UUserWidget
+class MYPROJECT_API UCreditWidget : public UBaseMenuWidget
 {
 	GENERATED_BODY()
 
-protected:
-	UPROPERTY(meta = (BindWidget))
-	class UButton* BackButton;
+public:
+	// Можливість додавання додаткових функцій або властивостей
 
+protected:
 	virtual void NativeConstruct() override;
 
-private:
-	UFUNCTION()
-	void OnBackButtonClicked();
+	// Якщо необхідно, можна додати додаткові обробники подій тут
 };

@@ -3,24 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "Base/BaseMenuWidget.h"
 #include "SettingsWidget.generated.h"
 
 /**
- * 
+ * Клас для меню налаштувань
  */
 UCLASS()
-class MYPROJECT_API USettingsWidget : public UUserWidget
+class MYPROJECT_API USettingsWidget : public UBaseMenuWidget
 {
 	GENERATED_BODY()
+public:
+	// Властивості для налаштувань
+	UPROPERTY(meta = (BindWidget))
+	class USlider* VolumeSlider;
+
+	UPROPERTY(meta = (BindWidget))
+	class UCheckBox* FullscreenCheckbox;
 
 protected:
-	UPROPERTY(meta = (BindWidget))
-	class UButton* BackButton;
-
 	virtual void NativeConstruct() override;
 
-private:
+	// Обробники подій
 	UFUNCTION()
-	void OnBackButtonClicked();
+	void OnVolumeSliderChanged(float Value);
+
+	UFUNCTION()
+	void OnFullscreenCheckboxChanged(bool bIsChecked);
 };

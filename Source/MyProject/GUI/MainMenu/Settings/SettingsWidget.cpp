@@ -2,24 +2,38 @@
 
 
 #include "SettingsWidget.h"
-#include "Components/Button.h"
+#include "Components/Slider.h"
+#include "Components/CheckBox.h"
+#include "GameFramework/GameUserSettings.h"
 #include "Kismet/GameplayStatics.h"
-#include "MenuHUD.h"
 
 void USettingsWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	if (BackButton)
+	if (VolumeSlider)
 	{
-		BackButton->OnClicked.AddDynamic(this, &USettingsWidget::OnBackButtonClicked);
+		VolumeSlider->OnValueChanged.AddDynamic(this, &USettingsWidget::OnVolumeSliderChanged);
+	}
+	if (FullscreenCheckbox)
+	{
+		FullscreenCheckbox->OnCheckStateChanged.AddDynamic(this, &USettingsWidget::OnFullscreenCheckboxChanged);
 	}
 }
 
-void USettingsWidget::OnBackButtonClicked()
+void USettingsWidget::OnVolumeSliderChanged(float Value)
 {
-	if (AMenuHUD* MenuHUD = Cast<AMenuHUD>(UGameplayStatics::GetPlayerController(this, 0)->GetHUD()))
+	// Реалізація зміни гучності
+	UE_LOG(LogTemp, Log, TEXT("Volume Slider Changed: %f"), Value);
+	// Тут можна додати код для зміни гучності звуку в грі
+}
+
+void USettingsWidget::OnFullscreenCheckboxChanged(bool bIsChecked)
+{
+	if (UGameUserSettings* UserSettings = GEngine->GetGameUserSettings())
 	{
-		MenuHUD->SwitchToCamera(MenuHUD->MainMenuCamera);
+		UserSettings->SetFullscreenMode(bIsChecked ? EWindowMode::Fullscreen : EWindowMode::Windowed);
+		UserSettings->ApplySettings(false);
+		UE_LOG(LogTemp, Log, TEXT("Fullscreen Checkbox Changed: %s"), bIsChecked ? TEXT("Checked") : TEXT("Unchecked"));
 	}
 }
